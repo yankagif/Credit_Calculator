@@ -368,3 +368,196 @@ public class Credit_Calculator {
 	/** Строковый массив - результаты расчетов аннуитетных платежей **/
 	public static String [] result_anuity = new String[4];
 	
+	/** Публичный метод расчета аннуитетных платежей **/
+	public static void calculate_anuity(double var_sum, int var_period, double var_percent, double var_month_com, double var_onetime_com) {
+	
+		/* расчет даты конца выплат */
+		calendar.add(Calendar.MONTH, var_period);
+		/* запись конечной даты в строковую переменную */
+		String end_date = date_format.format(calendar.getTime());
+		
+		/* переменная - ежемесячный платеж */
+		double payment = 0;
+		/* переменная - сумма выплат */
+		double sum_payment;
+		/* переменная - переплата */
+		double overpay;
+		
+		/* расчет ежемесячной процентной ставки */
+		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/100000000;
+		
+		/* расчет ежемесячного платежа, суммы выплат и переплаты */
+		payment = (var_sum*var_percent)/(1 - Math.pow((1+var_percent), -var_period)) + var_month_com;
+		sum_payment = payment*var_period + var_onetime_com;
+		sum_payment = (Math.rint(100*(sum_payment)))/100;
+		payment = (Math.rint(100*(payment)))/100;
+		overpay = sum_payment - var_sum;
+	
+		/* запись результатов в объекты BigDecimal
+		 * для корректного вывода больших чисел*/
+		BigDecimal big_summ = new BigDecimal(sum_payment);
+		BigDecimal big_overpay = new BigDecimal(overpay);
+		/* задание параметров вывода: 
+		 * количество цифр после запятой, тип округления*/
+		big_summ = big_summ.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		big_overpay = big_overpay.setScale(2, BigDecimal.ROUND_HALF_UP);
+	
+		/* запись переменных в массив результатов */
+		result_anuity[0] = big_summ.toString();
+		result_anuity[1] = big_overpay.toString();
+		result_anuity[2] = Double.toString(payment);
+		result_anuity[3] = end_date;
+	}
+	
+	/** Публичный метод, возвращающий значение 
+	 *  суммы выплат по аннуитетному кредиту **/
+	public static double getSumm_anuity() {
+		double summ = Double.parseDouble(result_anuity[0]);
+		return summ;
+	}
+	
+	/** Публичный метод, возвращающий значение 
+	 *  переплаты по аннуитетному кредиту **/
+	public static double getOverpay_anuity() {
+		double overpay= Double.parseDouble(result_anuity[1]);
+		return overpay;
+	}
+	
+	/** Публичный метод, возвращающий значение 
+	 *  ежемесячного платежа по аннуитетному кредиту **/
+	public static double getPayment_anuity() {
+		double payment= Double.parseDouble(result_anuity[2]);
+		return payment;
+	}
+	
+	/** Метод, выводящий на экран в новом окне
+	 *  результаты расчетов по аннуитетному платежу **/
+	static void window_anuity() {
+
+		/* стиль текста для текстовых полей надписей
+		 * шрифт Arial, начертание обычное, размер 16 */
+		Font label_result_font = new Font("Arial", Font.PLAIN, 16);
+		
+		/* графическое окно с результатами расчетов */
+		JFrame frame = new JFrame("Аннуитетный кредит");
+		/* задание размера окна */
+		frame.setSize(360, 200);
+		/* запрет на изменение размеров окна */
+		frame.setResizable(false);
+		/* расположение окна по центру экрана */
+		frame.setLocationRelativeTo(null);
+		
+		/* панель для расположения надписей с результатами расчетов */
+		JPanel panel_result = new JPanel();
+		/* отключение диспетчеров размещения:
+		 * расположение элементов производится вручную */
+		panel_result.setLayout(null);
+		
+		/* создание текстовых полей надписей */
+		JLabel labelsum = new JLabel();
+        JLabel labelpereplata = new JLabel();
+        JLabel labelm_plata = new JLabel();
+        JLabel labeldata = new JLabel();
+        JLabel labelres = new JLabel("РЕЗУЛЬТАТЫ РАСЧЕТОВ:");
+        
+        /* экземпляр класса CreateFields */	
+        CreateFields creator = new CreateFields();
+		/* выбор панели для размещения объектов */
+		creator.addPanel(panel_result);
+		
+        /* задание параметров для текстовых полей надписей
+		 * по схеме (имя поля, координата Х, координата У, ширина, высота, стиль) */
+        creator.CreateLabel(labelsum, 20, 55, 390, 15, label_result_font);
+        creator.CreateLabel(labelpereplata, 20, 80, 390, 15, label_result_font);
+        creator.CreateLabel(labelm_plata, 20, 105, 390, 15, label_result_font);
+        creator.CreateLabel(labeldata, 20, 130, 390, 15, label_result_font);
+        creator.CreateLabel(labelres, 60, 20, 390, 15, new Font("Arial", Font.PLAIN, 18));
+		
+        /* заполнение текстом надписей */
+		labelsum.setText("Итоговая сумма выплат: " + result_anuity[0] + " руб.");
+		labelpereplata.setText("Переплата: " + result_anuity[1] + " руб.");
+		labelm_plata.setText("Ежемесячный платеж: " + result_anuity[2] + " руб."); 
+		labeldata.setText("Дата окончания выплат: " + result_anuity[3]);
+		
+		/* добавление панели в окно */
+		frame.add(panel_result);
+		/* задание видимости окна */		
+		frame.setVisible(true);
+	}
+
+	/** Строковый массив - названия столбцов итоговой таблицы **/
+	static String [] name_column_table = new String [1];
+	/** Двумерный строковый массив - данные итоговой таблицы **/
+	static String [][] data_table = new String [1][1];
+	
+	/** Метод расчета дифференцированных платежей**/
+	public static void calculate_diff(double var_sum, int var_period, double var_percent, double var_month_com, double var_onetime_com) {
+		
+		/* переменные - размеры таблицы */
+		/* количество строк */
+		int difsize_line = var_period+3;
+		/* количество столбцов */
+		int difsize_column = 5;
+		
+		/* изменение размеров таблицы при наличии комиссий */
+		if (var_onetime_com != 0) {
+			difsize_line++;
+			difsize_column=6;
+		}
+		if (var_month_com != 0) {
+			difsize_column=6;
+		}
+		
+		/* строковый массив - названия столбцов */
+		String [] name_column_dif = new String [difsize_column];
+		/* двумерный строковый массив - данные таблицы */
+		String [][] data_dif = new String [difsize_line][difsize_column];
+		
+		/* массив - платежи по кредиту */
+		double [] payment_dif = new double[difsize_line-2];
+		/* массив - значения выплаченных процентов */
+		double [] percent_dif = new double[difsize_line-2];
+		/* массив - значения оставшейся суммы кредита */
+		double [] balance_dif = new double[difsize_line-2];
+		
+		/* переменная - сумма выплат */
+		double sum_payment = var_sum;
+		/* переменная - сумма выплаченных процентов */
+		double sum_percent = 0;
+		/* переменная - сумма выплат по комиссиям */
+		double sum_commission = var_month_com*var_period + var_onetime_com;;
+		/* переменная переплаты по кредиту */
+		double overpay = 0;
+		/* переменные - тело кредита */
+		double сredit_body = var_sum/var_period;
+		double сredit_body_first = 0;
+		
+		/* заполнение названий столбцов таблицы */
+		name_column_dif[0] = "Дата";
+		name_column_dif[1] = "Платеж";
+		name_column_dif[2] = "Проценты";
+		name_column_dif[3] = "Тело кредита";
+		name_column_dif[4] = "Остаток";
+		
+		/* расчет ежемесячной процентной ставки */
+		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/100000000;
+		
+		/* цикл расчета выплат, процентов за весь период, и запись значений */
+		for (int i = 0; i < var_period; i++) {
+			сredit_body = (Math.rint(100*(сredit_body)))/100;
+			if(i == var_period-1) {
+				сredit_body_first = сredit_body;
+				сredit_body = sum_payment;
+			}
+			payment_dif[i] = сredit_body + sum_payment*var_percent + var_month_com;
+			percent_dif[i] = sum_payment*var_percent;
+			sum_percent += percent_dif[i];
+			balance_dif[i] = sum_payment;
+			sum_payment -= сredit_body;
+			sum_payment= (Math.rint(100*(sum_payment)))/100;
+			
+			payment_dif[i]= (Math.rint(100*(payment_dif[i])))/100;
+			percent_dif[i]= (Math.rint(100*(percent_dif[i])))/100;
+			balance_dif[i]= (Math.rint(100*(balance_dif[i])))/100;
+		}
+		balance_dif[var_period] = sum_payment;
