@@ -196,3 +196,175 @@ public class Credit_Calculator {
 		day_box.setSelectedIndex(day_now-1);
 		/* запись выбранного элемента из списка в переменную */
 		var_box_date[0] = Integer.parseInt((String)day_box.getSelectedItem());
+
+				/* создание слушателя дейтсвий */
+		ActionListener day_Listener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				/* добавление объекта события */
+		    	JComboBox box = (JComboBox)e.getSource();
+		    	
+		    	/* запись выбранного элемента из списка в переменную */
+		    	String str = (String)box.getSelectedItem();
+		    	/* перевод из строкового типа в целочисленный */
+		    	var_box_date[0] = Integer.parseInt(str);
+		    }
+		};
+		/* добавление слушателя к объекту */
+		day_box.addActionListener(day_Listener);
+		
+		/* текстовый массив — номера месяцев */
+		String[] month = new String [12];
+		/* заполнение массива числами от 1 до 12 */
+		for (int i = 1; i<=12; i++) {
+			month[i-1] = "" + i;
+		}
+		
+		/* выпадающий список — номер месяца даты начала выплат */
+		final JComboBox month_box = new JComboBox(month);
+		/* установка выбранного элемента на текущую дату */
+		month_box.setSelectedIndex(month_now);
+		/* запись выбранного элемента из списка в переменную */
+		var_box_date[1] = Integer.parseInt((String)month_box.getSelectedItem());
+		
+		/* создание слушателя дейтсвий**/
+		ActionListener month_Listener = new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	/* добавление объекта события */
+		    	JComboBox box = (JComboBox)e.getSource();
+		    	
+		    	/* запись выбранного элемента из списка в переменную */
+		    	String str = (String)box.getSelectedItem();
+		    	/* перевод из строкового типа в целочисленный */
+		    	var_box_date[1] = Integer.parseInt(str);
+		    }
+		};
+		/* добавление слушателя к объекту */
+		month_box.addActionListener(month_Listener);
+		
+		/* текстовый массив — номера годов, 
+		 * когда можно оформить кредит */
+		String[] years = new String [10];
+		/* заполнение массива числами: 
+		 * нынешний год + 9 последующих лет */
+		for (int i = 0; i<10; i++) {
+			years[i] = "" + (i + year_now);
+		}
+		
+		/* выпадающий список — номер года даты начала выплат */
+		final JComboBox year_box = new JComboBox(years);
+		/* запись выбранного элемента из списка в переменную */
+		var_box_date[2] = Integer.parseInt((String)year_box.getSelectedItem());
+		
+		/* создание слушателя дейтсвий */
+		ActionListener year_Listener = new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	/* создание объекта события */
+		    	JComboBox box = (JComboBox)e.getSource();
+		    	
+		    	/* запись выбранного элемента из списка в переменную */
+		    	String str = (String)box.getSelectedItem();
+		    	/* перевод из строкового типа в целочисленный */
+		    	var_box_date[2] = Integer.parseInt(str);
+		    }
+		};
+		/* добавление слушателя к объекту */
+		year_box.addActionListener(year_Listener);
+		
+		/* задание параметров для выпадающих списков
+		 * по схеме (имя поля, координата Х, координата У, ширина, высота, стиль) */
+		create.CreateComboBox(period_box, 243, 80, 77, 30, combobox_font);
+		create.CreateComboBox(type_box, 20, 200, 300, 30, combobox_font);
+		create.CreateComboBox(day_box, 20, 260, 60, 30, combobox_font);
+		create.CreateComboBox(month_box, 100, 260, 60, 30, combobox_font);
+		create.CreateComboBox(year_box, 180, 260, 85, 30, combobox_font);	
+
+		/* стиль текста для кнопки
+		 * шрифт Arial, начертание обычное, размер 25 */
+		Font button_font = new Font("Arial", Font.PLAIN, 25);
+		
+		/* кнопка для расчета и вывода результатов */
+		JButton result_button = new JButton ("Расcчитать");
+		/* задание параметров для кнопки по схеме 
+		 * (имя поля, координата Х, координата У, ширина, высота, стиль) */
+		create.CreateButton(result_button, 20, 465, 300, 45, button_font);
+
+		/* добавление слушателя для кнопки */
+		result_button.addMouseListener( new MouseAdapter()			
+		{
+			/** Метод обработки нажатия на кнопку **/
+			public void mouseClicked(MouseEvent event) {
+				/* задание значения переменной */
+				check = true;
+				
+				/* вызов метода проверки введенных данных
+				 * по схеме (имя поля, минимальное значение, максимальное значение) */
+				Credit_Calculator.control(SummaField, 10000, 5000000);
+				Credit_Calculator.control(PeriodField, 1, 360);
+				if (var_box_period == "год") Credit_Calculator.control(PeriodField, 1, 30);
+				Credit_Calculator.control(PercentField, 5, 40);
+				Credit_Calculator.control(CommissionField, 0, 5);
+				Credit_Calculator.control(OnetimeField, 0, 3);
+				/* остановка выполнения метода при наличии ошибок ввода */
+				if (!check) return;
+
+				/* присвоение переменным введенных значений из полей */
+				var_sum = Double.parseDouble(SummaField.getText());
+				var_period = Integer.parseInt(PeriodField.getText());
+				var_percent  = Double.parseDouble(PercentField.getText());
+				var_month_com = Double.parseDouble(CommissionField.getText());
+				var_onetime_com = Double.parseDouble(OnetimeField.getText());
+				var_box_date[0] = Integer.parseInt((String)day_box.getSelectedItem());
+				var_box_date[1] = Integer.parseInt((String)month_box.getSelectedItem());
+				var_box_date[2] = Integer.parseInt((String)year_box.getSelectedItem());
+				
+				/* вызов метода обработки даты */
+				Credit_Calculator.time();
+				/* вызов метода расчета сумм платежей по комиссиям*/
+				Credit_Calculator.commission();
+				
+				/* вызов определенного метода, в зависимости от выбранного вида платежей */
+				if (var_box_type.equals("Аннуитетный")) {
+					Credit_Calculator.calculate_anuity(var_sum, var_period, var_percent, var_month_com, var_onetime_com);
+					Credit_Calculator.window_anuity();
+				}else {
+					Credit_Calculator.calculate_diff(var_sum, var_period, var_percent, var_month_com, var_onetime_com);
+					Credit_Calculator.window_diff();
+				}
+			}
+		});
+		/* добавление панели в окно */
+		window.setContentPane(mainPanel);
+		/* задание видимости окна */
+		window.setVisible(true);
+	}
+	
+	/** Объект – формат записи даты **/
+	private static DateFormat date_format = new SimpleDateFormat("dd.MM.yyyy");
+	/** Метод обработки даты**/
+	private static void time() {
+		/* Присвоение текущей даты объекту календарь */
+		calendar.set(Calendar.YEAR, var_box_date[2]);
+		calendar.set(Calendar.MONTH, var_box_date[1]-1);
+		calendar.set(Calendar.DAY_OF_MONTH, var_box_date[0]);
+		
+		if (var_box_period == "год") {
+			var_period *= 12;
+		}
+	}
+	
+	/** Метод расчета сумм выплат по комиссиям **/
+	private static void commission() {
+		/* вычисление суммы платежа по ежемесячной комиссии */
+		if (var_month_com != 0) {
+			var_month_com = (Math.rint(100*((var_sum * var_month_com)/100)))/100;
+		}
+		/* вычисление суммы платежа по единовременной комиссии */
+		if (var_onetime_com != 0) {
+			var_onetime_com = (Math.rint(100*((var_sum * var_onetime_com)/100)))/100;
+		}
+	}
+	
+
+	/** Строковый массив - результаты расчетов аннуитетных платежей **/
+	public static String [] result_anuity = new String[4];
+	
