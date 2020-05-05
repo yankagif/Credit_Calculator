@@ -1,0 +1,41 @@
+# Created at 2020-05-04T21:53:43.886
+TestSet has not finished before stream error has appeared >> initializing exit by non-null configuration: null
+java.io.EOFException
+	at java.base/java.io.DataInputStream.readInt(DataInputStream.java:397)
+	at org.apache.maven.surefire.booter.MasterProcessCommand.decode(MasterProcessCommand.java:115)
+	at org.apache.maven.surefire.booter.CommandReader$CommandRunnable.run(CommandReader.java:391)
+	at java.base/java.lang.Thread.run(Thread.java:830)
+
+
+# Created at 2020-05-04T21:53:43.963
+Unexpected IOException: 1,1,org.apache.maven.surefire.junitplatform.JUnitPlatformProvider,test.Test1,null,null,null
+
+
+# Created at 2020-05-04T21:53:43.977
+Unexpected IOException: 5,1,test.Test1,test,null,null,null
+
+
+# Created at 2020-05-04T21:53:44.002
+Unexpected IOException: 6,1,test.Test1,test,null,null,null
+
+
+# Created at 2020-05-04T21:53:44.003
+Unexpected IOException: 2,1,org.apache.maven.surefire.junitplatform.JUnitPlatformProvider,test.Test1,null,null,null
+
+
+# Created at 2020-05-04T21:53:44.005
+Unexpected IOException: 1,1,org.apache.maven.surefire.junitplatform.JUnitPlatformProvider,test.Test2,null,null,null
+
+
+# Created at 2020-05-04T21:53:44.006
+Unexpected IOException: 5,1,test.Test2,test,null,null,null
+
+
+# Created at 2020-05-04T21:53:44.007
+Unexpected IOException: 6,1,test.Test2,test,null,null,null
+
+
+# Created at 2020-05-04T21:53:44.008
+Unexpected IOException: 2,1,org.apache.maven.surefire.junitplatform.JUnitPlatformProvider,test.Test2,null,null,null
+
+
