@@ -561,3 +561,216 @@ public class Credit_Calculator {
 			balance_dif[i]= (Math.rint(100*(balance_dif[i])))/100;
 		}
 		balance_dif[var_period] = sum_payment;
+
+				/* расчет общей суммы выплат и переплаты */
+		for (int i=0; i < var_period; i++) {
+			sum_payment += payment_dif[i];
+		}
+		sum_payment += var_onetime_com;
+		overpay = sum_payment - var_sum;
+						
+		/* заполнение всех ячеек таблиц соответствующими данными */
+		data_dif[0][0] = date_format.format(calendar.getTime());
+		for (int i = 0; i<var_period; i++) {
+			calendar.add(Calendar.MONTH, 1);
+			data_dif[i+1][0] = date_format.format(calendar.getTime());
+			data_dif[i+1][1] = "" + payment_dif[i];
+			data_dif[i+1][2] = "" + percent_dif[i];
+			data_dif[i+1][3] = "" + сredit_body_first;
+			data_dif[i][4] = "" + balance_dif[i];
+		}
+		data_dif[var_period][3] = "" + сredit_body;		
+		data_dif[difsize_line-2][4] = "" + balance_dif[var_period];	
+				
+		/* запись результатов в объекты BigDecimal
+		 * для корректного вывода больших чисел */
+		BigDecimal big_summ = new BigDecimal (sum_payment);
+		BigDecimal big_percent = new BigDecimal(sum_percent);
+		BigDecimal big_overpay = new BigDecimal(overpay);
+		BigDecimal big_commission = new BigDecimal(sum_commission);
+		/* задание параметров вывода: 
+		 * количество цифр после запятой, тип округления */
+		big_summ = big_summ.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		big_percent = big_percent.setScale(2, BigDecimal.ROUND_HALF_UP);
+		big_overpay = big_overpay.setScale(2, BigDecimal.ROUND_HALF_UP);
+		big_commission = big_commission.setScale(2, BigDecimal.ROUND_HALF_UP);
+		
+		/* изменение значений таблицы при наличии ежемесячной комиссии */
+		if (var_month_com != 0.0) {
+			for (int i = 0; i<var_period; i++) {
+				data_dif[i+1][4] = "" + var_month_com;
+				data_dif[i][5] = "" + balance_dif[i];
+			}
+			data_dif[0][4] = "0";
+			data_dif[difsize_line-2][4] = "" + big_commission;
+			data_dif[difsize_line-2][5] = "" + balance_dif[var_period];
+			
+			name_column_dif[4] = "Комиссия";
+			name_column_dif[5] = "Остаток";
+		}
+		
+		/* изменение значений таблицы при наличии единовременной комиссии */
+		if (var_onetime_com != 0) {			
+			/* смещение строк на одну вниз */
+			for (int i = var_period+1; i>=0; i--) {
+				for (int j = 0; j<4; j++) {
+					data_dif[i+1][j] = data_dif[i][j];
+				}				
+			}
+			for (int i = 1; i<var_period+2; i++) {
+				data_dif[i][4] = "" + var_month_com;
+				data_dif[i][5] = "" + balance_dif[i-1];
+			}
+			data_dif[0][4] = "0";
+			data_dif[0][0] = data_dif[1][0];
+			data_dif[1][5] = data_dif[0][5] = "" + var_sum;
+			data_dif[1][1] = "" + var_onetime_com;
+			data_dif[1][4] = data_dif[1][1];
+			data_dif[difsize_line-2][4] = "" + big_commission;
+			data_dif[difsize_line-2][5] = "" + balance_dif[var_period];
+			
+			name_column_dif[4] = "Комиссия";
+			name_column_dif[5] = "Остаток";
+		} 
+		
+		/* добавление конечных значений в таблицу */
+		data_dif[difsize_line-2][0] = "Всего выплат";
+		data_dif[difsize_line-2][1] = "" + big_summ;
+		data_dif[difsize_line-2][2] = "" + big_percent;
+		data_dif[difsize_line-2][3] = "" + var_sum;
+		data_dif[difsize_line-1][0] = "Переплата";
+		data_dif[difsize_line-1][1] = "" + big_overpay;
+		
+		/* заполнение пустых ячеек нулями */
+		for (int i=0; i<difsize_line-1; i++) {
+			for (int j=0; j<difsize_column; j++) {
+				if (data_dif[i][j] == null) {
+					data_dif[i][j] = "0.0";
+				}
+			}
+		}
+		
+ 		/* запись полученных данных в итоговую таблицу для вывода */
+		data_table = data_dif;
+		name_column_table = name_column_dif;
+		
+		/* запись расчетов суммы выплат и переплаты в публичную переменную */
+		result_diff[0] = sum_payment;
+		result_diff[1] = overpay;
+	}
+	/** Массив - результаты расчетов по дифференцированному кредиту **/
+	static double  [] result_diff = new double [2];
+	
+	/** Метод, возвращающий сумму выплат
+	 * 	по дифференцированному кредиту **/
+	public static double getSumm_diff() {
+		return result_diff[0];
+	}
+	/** Метод, возвращающий переплату
+	 *  по дифференцированному кредиту **/
+	public static double  getOverpay_diff() {
+		return result_diff[1];
+	}
+		
+	
+	/** Метод для вывода на экран
+	 *  окна с таблицей, содержащей
+	 *  результаты расчетов
+	 *  по дифференцированному кредиту**/
+	static void window_diff () {
+		
+		/* графическое окно с результатами расчетов */
+		JFrame frame = new JFrame("План выплат дифференцированных платежей");
+		/* задание предпочтительного размера окна */
+		frame.setPreferredSize(new Dimension (770, 318));
+		
+		/* таблица, содержащая план выплат
+		 * по дифференцированному кредиту */
+		JTable table = new JTable(data_table, name_column_table);
+		
+		/* установка размеров окна, подходящих под размеры содержимого */
+		frame.pack();
+		/* добавление панели прокрутки, содержащую таблицу */
+		frame.add(new JScrollPane(table));
+
+		/* добавление рендера для расположения текста в таблице по центру ячеек */
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+		for(int x=0;x<table.getColumnCount();x++){
+	         table.getColumnModel().getColumn(x).setCellRenderer( centerRenderer );
+		}
+		
+		/* расположение окна по центру экрана */
+		frame.setLocationRelativeTo(null);
+		/* задание видимости окна */		
+		frame.setVisible(true);
+	}
+	
+	
+	/** Переменная, говорящая о наличии ошибок в введенных данных.  
+	 *  Значение true означает отсутствие ошибок, false - их наличие**/
+	private static boolean check = true;
+	
+	/** Метод проверки текстовых полей ввода с входными параметрами: 
+	 *  имя поля ввода, максимальное значение, минимальное значение**/
+	public static boolean control(JTextField field, int min, int max) {
+		
+		/* проверка поля ввода на наличие символов */
+		try {
+			switch(field.getText()) {
+			case(""):	throw new Exception();}
+		}
+		catch(Exception ex) {
+			if (check) {
+				JOptionPane.showMessageDialog(null, "Заполните все поля!", "Внимание!" , JOptionPane.INFORMATION_MESSAGE);
+			}			
+			field.setText("0");
+			check=false;
+			return false;
+		}
+		
+		/* проверка поля ввода на тип введенных данных */
+		try {Double.parseDouble(field.getText());}
+		catch (NumberFormatException ex) {
+			if (check) {
+				JOptionPane.showMessageDialog(null, "Можно вводить только числа, повторите ввод", "Внимание!" , JOptionPane.INFORMATION_MESSAGE);
+			}
+			check=false;
+			return false;
+		}
+		
+		/* нормирование введенных данных, согласно крайним значениям */
+		try {
+			/* числовая переменная для проверки значений */
+			double x = Double.parseDouble(field.getText());
+			if (x < min) {
+				field.setText(Integer.toString(min));
+				throw new Exception();
+			}
+			if (x > max) {
+				field.setText(Integer.toString(max));
+				throw new Exception();
+			}
+			/* обработка значений срока кредита */
+			if (max == 360 | max == 30)	{
+				/* округление введенного значения в большую сторону, 
+				 * так как срок кредита может быть только целым числом*/
+				x = Math.ceil(x);
+				int x_int = (int) x;
+				field.setText(Integer.toString(x_int));
+			}else {
+				x-=0;
+				field.setText(Double.toString(x));
+			}			
+		}
+		
+		catch (Exception ex) {
+			if (check) {
+				JOptionPane.showMessageDialog(null, "Введены некорректные данные", "Внимание!" , JOptionPane.INFORMATION_MESSAGE);
+			}
+			check=false;
+			return false;
+		}
+		return check;
+	}
+}
