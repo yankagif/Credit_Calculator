@@ -540,7 +540,7 @@ public class Credit_Calculator {
 		name_column_dif[4] = "Остаток";
 		
 		/* расчет ежемесячной процентной ставки */
-		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/10000000;
+		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/100000000;
 		
 		/* цикл расчета выплат, процентов за весь период, и запись значений */
 		for (int i = 0; i < var_period; i++) {
