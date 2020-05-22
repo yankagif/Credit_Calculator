@@ -111,7 +111,7 @@ public class Credit_Calculator {
 		JLabel percent_label = new JLabel("Процентная ставка (в год), %");
 		JLabel type_label = new JLabel("Вид платежей");
 		JLabel day_label = new JLabel("День");
-		JLabel month_label = new JLabel("Месяц");
+		JLabel month_label = new JLabel("");
 		JLabel year_label = new JLabel("Год");
 		JLabel date_label = new JLabel("Дата выдачи кредита");
 		JLabel comission_label = new JLabel("Ежемесячная комиссия, %");
@@ -384,7 +384,7 @@ public class Credit_Calculator {
 		double overpay;
 		
 		/* расчет ежемесячной процентной ставки */
-		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/100000000;
+		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/10000000;
 		
 		/* расчет ежемесячного платежа, суммы выплат и переплаты */
 		payment = (var_sum*var_percent)/(1 - Math.pow((1+var_percent), -var_period)) + var_month_com;
