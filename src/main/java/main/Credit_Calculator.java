@@ -1,4 +1,4 @@
-package main;
+ package main;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -104,9 +104,9 @@ public class Credit_Calculator {
 		/* стиль текста для текстовых полей надписей 
 		 * шрифт Arial, начертание жирное, размер 15 */
 		Font label_font = new Font("Arial", Font.BOLD, 15);
-		
+		        
 		/* создание текстовых полей надписей */
-		JLabel sum_label = new JLabel("Сумма кредита, руб");
+		JLabel sum_label = new JLabel("Сумма кредит" )     ;               
 		JLabel period_label = new JLabel("Срок кредита");
 		JLabel percent_label = new JLabel("Процентная ставка (в год), %");
 		JLabel type_label = new JLabel("Вид платежей");
@@ -384,7 +384,7 @@ public class Credit_Calculator {
 		double overpay;
 		
 		/* расчет ежемесячной процентной ставки */
-		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/100000000;
+		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/1000000;
 		
 		/* расчет ежемесячного платежа, суммы выплат и переплаты */
 		payment = (var_sum*var_percent)/(1 - Math.pow((1+var_percent), -var_period)) + var_month_com;
