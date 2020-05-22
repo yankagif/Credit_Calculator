@@ -283,7 +283,7 @@ public class Credit_Calculator {
 		Font button_font = new Font("Arial", Font.PLAIN, 25);
 		
 		/* кнопка для расчета и вывода результатов */
-		JButton result_button = new JButton ("Расcчитать");
+		JButton result_button = new JButton ("Вычислить");
 		/* задание параметров для кнопки по схеме 
 		 * (имя поля, координата Х, координата У, ширина, высота, стиль) */
 		create.CreateButton(result_button, 20, 465, 300, 45, button_font);
@@ -384,7 +384,7 @@ public class Credit_Calculator {
 		double overpay;
 		
 		/* расчет ежемесячной процентной ставки */
-		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/100000000;
+		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/10000000;
 		
 		/* расчет ежемесячного платежа, суммы выплат и переплаты */
 		payment = (var_sum*var_percent)/(1 - Math.pow((1+var_percent), -var_period)) + var_month_com;
