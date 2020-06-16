@@ -384,7 +384,7 @@ public class Credit_Calculator {
 		double overpay;
 		
 		/* расчет ежемесячной процентной ставки */
-		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/10000000;
+		var_percent = (Math.rint(100000000*(var_percent/(100*12))))/100000000;
 		
 		/* расчет ежемесячного платежа, суммы выплат и переплаты */
 		payment = (var_sum*var_percent)/(1 - Math.pow((1+var_percent), -var_period)) + var_month_com;
